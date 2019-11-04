@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{{ name }}<br>
+{{ age }}<br>
+{{ hobby.0 }}<br>
+{{ user.name }}<br>
+{{ age |add:+10 }}<br>
+{{ name|upper }}<br>
+{{ name|lower }}<br>
+{{ name|title }}<br>
+{{ name|cut:'z' }}<br>
+{{ name1|default:"XXXX" }}<br>
+{{ now_time|date:'Y-m-d H:i:s' }}<br>
+{{ js|safe }}
+{% if age > 18 %}
+    成年了
+{% elif age < 18 %}
+    未成年
+ {% else %}
+    差点意思
+{% endif %}
+    <br>
+{% for i in user %}
+    {{ forloop.counter }}
+    {{ forloop.first }}
+    {{ forloop.last }}
+    {{ i }}
+
+
+{% endfor %}
+
+</body>
+</html>
