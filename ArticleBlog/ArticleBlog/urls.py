@@ -1,4 +1,4 @@
-"""one URL Configuration
+"""ArticleBlog URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
@@ -14,19 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,re_path,include
-from .views import *
-from app01.views import *
-from app02.views import *
+from django.urls import path
+from . import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('index1/',index1),
-    # path('index/',index),
-    path('about/',about),
-    path('listpic/',listpic),
-    path('newlistpic/',newlistpic),
-    path('base/',base),
-    # path('app01/',include('app01.urls'))
-    # re_path('getDay/(?P<y>\w{4})/(?P<m>\w{1,2})/(?P<d>\w{1,2})',getDay),
-    path('app02/',include('app02.urls'))
+    path('index/',views.index),
+    path('about/',views.about),
+    path('listpic/',views.listpic),
+    path('newslistpic/',views.newslistpic),
 ]
