@@ -6,16 +6,13 @@
 <meta name="keywords" content="个人博客模板古典系列之――江南墨卷" />
 <meta name="description" content="个人博客模板古典系列之――江南墨卷" />
 <link href="/static/css/base.css" rel="stylesheet">
-<link href="/static/css/index.css" rel="stylesheet">
+<link href="/static/css/main.css" rel="stylesheet">
 <!--[if lt IE 9]>
 <script src="js/modernizr.js"></script>
 <![endif]-->
 <script type="text/javascript" src="/static/js/jquery.js"></script>
 </head>
 <body>
-<div class="topnav">
-<a href="http://www.yangqq.com/download/div/2017-07-16/785.html" target="_blank">个人博客模板古典系列之――江南墨卷</a>――作品来自<a href="http://www.yangqq.com" target="_blank">杨青个人博客网站</a>
-</div>
 <div id="wrapper">
   <header>
     <div class="headtop"></div>
@@ -62,60 +59,37 @@
 			$(this).find('ul:first').css({visibility: "hidden"});
 		});
 	});
-</SCRIPT> 
+</SCRIPT>
     </div>
   </header>
-  <div class="jztop"></div>
   <div class="container">
-    <div class="bloglist f_l">
-    {% for new in newarticle %}
-      <h3><a href="/articleDetails/{{ new.id }}">{{ new.title }}</a></h3>
-      <figure><img src="/static/{{ new.picture }}" alt="{{ new.title }}"></figure>
-      <ul>
-        <p>{{ new.description |safe }}</p>
-        <a title="{{ new.title }}" href="/articleDetails/{{ new.id }}" target="_blank" class="readmore">阅读全文&gt;&gt;</a>
-      </ul>
-      <p class="dateview"><span>{{ new.data }}</span><span>作者：{{ new.author.name }}</span>
-          <span>个人博客：[<a href="/jstt/bj/">{{ new.type.first.name }}</a>]</span></p>
-    {% endfor %}
-    </div>
-    <div class="r_box f_r">
-      <div class="tit01">
-        <h3 class="tit">关注我</h3>
-        <div class="gzwm">
-          <ul>
-            <li><a class="email" href="#" target="_blank">我的电话</a></li>
-            <li><a class="qq" href="#mailto:admin@admin.com" target="_blank">我的邮箱</a></li>
-            <li><a class="tel" href="#" target="_blank">我的QQ</a></li>
-            <li><a class="prize" href="#">个人奖项</a></li>
-          </ul>
+    <div class="con_content">
+      <div class="about_box">
+        <h2 class="nh1"><span>您现在的位置是：<a href="/" target="_blank">网站首页</a>>><a href="#" target="_blank">信息浏览</a></span><b>个人简介</b></h2>
+        <div class="f_box">
+          <p class="a_title">{{ article.title }}</p>
+          <p class="p_title"></p>
+          <!--  <p class="box_p"><span>发布时间：2017-07-07 15:12:42</span><span>作者：唐孝文</span><span>来源：稽查支队</span><span>点击：111056</span></p>-->
+          <!-- 可用于内容模板 -->
         </div>
-      </div>
-      <!--tit01 end-->
-      
-      <div class="tuwen">
-        <h3 class="tit">图文推荐</h3>
-        <ul>
-            {% for recommend in recommendarticle %}
-          <li><a href="/articleDetails/{{ recommend.id }}"><img src="/static/{{ recommend.picture }}"><b>{{ recommend.title }}</b></a>
-            <p><span class="tulanmu"><a href="/articleDetails/{{ recommend.id }}">{{ recommend.type.first.name }}</a></span><span class="tutime">{{ recommend.data }}</span></p>
-          </li>
-            {% endfor %}
+        <ul class="about_content">
+          <p> {{ article.content |safe}}</p>
+          <p><img src="/static/{{ article.picture }}"></p>
+{#          <p>“冥冥中该来则来，无处可逃”。 </p>#}
         </ul>
+        <!--    <div class="nextinfos">
+      <p>上一篇：<a href="/">区中医医院开展志愿服务活动</a></p>
+      <p>下一篇：<a href="/">广安区批准“单独两孩”500例</a></p>
+    </div>-->
+        <!-- 可用于内容模板 -->
+
+        <!-- container代码 结束 -->
       </div>
-      <div class="ph">
-        <h3 class="tit">点击排行</h3>
-        <ul class="rank">
-            {% for one in clickarticle %}
-                <li><a href="/articleDetails/{{ one.id }}" title="{{ one.title }}" target="_blank">{{ one.title }}</a></li>
-            {% endfor %}
-        </ul>
-      </div>
-      <div class="ad"> <img src="/static/images/03.jpg"> </div>
     </div>
+    <div class="blank"></div>
   </div>
   <!-- container代码 结束 -->
-  <div class="jzend"></div>
+
   <footer>
     <div class="footer">
       <div class="f_l">
