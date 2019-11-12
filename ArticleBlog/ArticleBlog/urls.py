@@ -22,6 +22,7 @@ from .views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/',index),
+    re_path('^$',index),
     path('about/',about),
     path('listpic/',listpic),
     path('newslistpic/',newslistpic),
@@ -30,6 +31,15 @@ urlpatterns = [
     path('articleDetails/',articleDetails),
     path('ckeditor/',include('ckeditor_uploader.urls')),
     path('AddArticle/',AddArticle),
+    path('http/',http),
+    path('httppost/',httppost),
+    path('ajaxdemo/',ajaxdemo),
+    path('ajaxreq/',ajaxreq),
+    path('ajaxpost/',ajaxpost),
+    path('ajaxnew/',ajaxnew),
+    path('login/',login),
+    path('logout/',logout),
+    path('checkuser/',checkuser),
 ]
 
 

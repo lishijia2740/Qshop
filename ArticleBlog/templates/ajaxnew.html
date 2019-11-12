@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ajaxpost</title>
+    <script src="/static/js/jquery.min.js"></script>
+</head>
+<body>
+用户名:<input id="username" type="text" name="username"><span style="color: red" id="contenterror"></span><br>
+密码:<input id="password" type="password" name="password"><br>
+<input id="register" type="submit" value="注册">
+</body>
+<p id="content"></p>
+<script>
+    $("#register").click(
+        function () {
+            var username = $("#username").val();
+            var password = $("#password").val();
+            var url = '/ajaxpost/'
+            send_data = {
+                "username":username,
+                "password":password,
+                "csrfmiddlewaretoken":"{{ csrf_token }}"
+            };
+            $.ajax({
+                url:url,
+                type:"post",
+                data:send_data,
+                success:function (data) {
+                    console.log(data)
+                    $("#content").text(data["msg"])
+                },
+                error:function (error) {
+                    console.log(erroe)
+                }
+            })
+        }
+    )
+
+    $("#username").blur(
+        function () {
+            var username = $("#username").val();
+            var url = "/checkuser/?username="+username;
+            $.ajax({
+                url:url,
+                type:"get",
+                data:'',
+                success:function (data) {
+                    console.log(data)
+                    $('#contenterror').text(data["msg"])
+                },
+                error:function (error) {
+                    console.log(error)
+                }
+            })
+
+        }
+    )
+
+</script>
+</html>

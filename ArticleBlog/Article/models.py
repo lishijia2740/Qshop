@@ -36,3 +36,11 @@ class Article(models.Model):
     type = models.ManyToManyField(to=Type)
     class Meta:
         db_table='article'
+
+
+class User(models.Model):
+    name = models.CharField(max_length=32)
+    pwd = models.CharField(max_length=32)
+
+    class Meta:
+        db_table='user'
