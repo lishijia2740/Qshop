@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue</title>
+    <script src="/static/vue/vue.min.js"></script>
+</head>
+<body>
+{% verbatim %}
+<div id="content">
+    数据绑定:
+    hello word {{ name }} {{ age }}
+    <hr>
+    <p v-bind:id="userid">
+        属性绑定
+    </p>
+    <hr>
+        <p v-if="flag">
+        判断绑定
+    </p>
+        <hr>
+        <p v-for="one in pythonlist">
+        循环绑定{{ one }}
+    </p>
+        <hr>
+        <p v-on:click="alert">
+        事件绑定
+    </p>
+    <hr>
+</div>
+{% endverbatim %}
+<script>
+    var vue =new Vue(
+        {
+            el:"#content",
+            data:{
+                name:'zhangsan',
+                age:13,
+                style:'color:red;',
+                userid:1,
+                flag:1,
+                pythonlist:['asd','fgh','jkl']
+            },
+            method:{
+                "alert":function () {
+                    alert('hello word')
+                }
+            },
+        }
+    )
+</script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends "buyer/base.html" %}
+{% block title %}
+    用户订单
+{% endblock %}
+
+{% block content %}
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+			<ul>
+                <li><a href="/buyer/person_info/">· 个人信息</a></li>
+				<li><a href="/buyer/user_center_order/" class="active">· 全部订单</a></li>
+				<li><a href="/buyer/user_center_site/">· 收货地址</a></li>
+			</ul>
+		</div>
+		<div class="right_content clearfix">
+				<h3 class="common_title2">全部订单</h3>
+                {% for one in payorder %}
+				<ul class="order_list_th w978 clearfix">
+					<li class="col01">{{ one.order_date }}</li>
+					<li class="col02">订单号:{{ one.order_number }}</li>
+					<li class="col02 stress">{{ one.get_order_status_display }}</li>
+				</ul>
+				<table class="order_list_table w980">
+					<tbody>
+						<tr>
+							<td width="55%">
+                                {% for order in one.orderinfo_set.all %}
+								<ul class="order_goods_list clearfix">
+									<li class="col01"><img src="/static/{{ order.goods.goods_picture }}"></li>
+									<li class="col02">{{ order.goods.goods_name }}<em>{{ order.goods.goods_price }}/500g</em></li>
+									<li class="col03">{{ order.goods_count }}</li>
+									<li class="col04">{{ order.goods_total_price }}元</li>
+								</ul>
+                                    {% endfor %}
+							</td>
+							<td width="15%">{{ one.order_total }}元</td>
+                        {% if one.order_status == 1 %}
+                            <td width="15%">待付款</td>
+							<td width="15%"><a href="/buyer/payorder/?order_id={{ one.id }}" class="oper_btn">去付款</a></td>
+                        {% else %}
+                            <td width="15%">已付款</td>
+                            <td width="15%"><a href="#" class="oper_btn">查看物流</a></td>
+                        {% endif %}
+						</tr>
+					</tbody>
+				</table>
+                {% endfor %}
+				<div class="pagenation">
+					<a href="#">上一页</a>
+					<a href="#" class="active">1</a>
+					<a href="#">2</a>
+					<a href="#">3</a>
+					<a href="#">4</a>
+					<a href="#">5</a>
+					<a href="#">下一页></a>
+				</div>
+		</div>
+	</div>
+{% endblock %}

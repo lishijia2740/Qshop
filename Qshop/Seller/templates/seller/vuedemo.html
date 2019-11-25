@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}
+    商品页
+{% endblock %}
+{% block style %}
+    <script src="/static/vue/vue.min.js"></script>
+{% endblock %}
+{% block content %}
+    {% verbatim %}
+    <div id="content">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>商品编号</th>
+                <th>商品名称</th>
+                <th>商品价格</th>
+                <th>商品数量</th>
+                <th>商品产地</th>
+                <th>商品保质期</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="one in goods_list">
+                <td>{{ one.goods_number }}</td>
+                <td>{{ one.goods_name }}</td>
+                <td>{{ one.goods_price }}</td>
+                <td>{{ one.goods_count }}</td>
+                <td>{{ one.goods_location }}</td>
+                <td>{{ one.goods_safe_data }}</td>
+                <td>{{ one.goods_pro_time }}</td>
+                <td>
+                    <button class="btn btn-primary">修改</button>
+                    <button class="btn btn-primary">下架</button>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            </tfoot>
+        </table>
+        <ul style="float: right;margin-right: 50px;" class="pagination">
+            <li class="paginate_button page-item" v-for="page in page_range">
+                <a class='page-link' v-bind:href="page">{{ page }}</a>
+            </li>
+        </ul>
+    </div>
+    {% endverbatim %}
+{% endblock %}
+
+{% block script %}
+    <script> var vue = new Vue({
+        el: "#content",
+        data: {
+            goods_list: [{
+                "goods_number": "00001",
+                "goods_name": "白菜",
+                "goods_price": 1000,
+                "goods_count": 100,
+                "goods_location": "北京",
+                "goods_safe_data": 10,
+                "goods_pro_time": "2019-07-01"
+            }, {
+                "goods_number": "00001",
+                "goods_name": "白菜",
+                "goods_price": 1000,
+                "goods_count": 100,
+                "goods_location": "北京",
+                "goods_safe_data": 10,
+                "goods_pro_time": "2019-07-01"
+            }, {
+                "goods_number": "00001",
+                "goods_name": "白菜",
+                "goods_price": 1000,
+                "goods_count": 100,
+                "goods_location": "北京",
+                "goods_safe_data": 10,
+                "goods_pro_time": "2019-07-01"
+            }, {
+                "goods_number": "00001",
+                "goods_name": "白菜",
+                "goods_price": 1000,
+                "goods_count": 100,
+                "goods_location": "北京",
+                "goods_safe_data": 10,
+                "goods_pro_time": "2019-07-01"
+            },
+            ],
+            page_range: [1, 2, 3, 4, 5]
+        }
+    })
+    </script>
+{% endblock %}
