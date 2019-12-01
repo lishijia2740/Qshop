@@ -18,7 +18,7 @@ class MiddleWareTest(MiddlewareMixin):
         ## 判断ip是否在黑名单中
         # if rep_ip =="10.10.92.41":
             ## 返回响应
-        return HttpResponse('绕路！')
+        # return HttpResponse('绕路！')
 
     def process_view(self, request, callback, callbackargs, callbackkwargs):
         """
