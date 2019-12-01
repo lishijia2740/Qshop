@@ -10,6 +10,8 @@ urlpatterns = [
     path('goods_list/', goods_list),
     path('goods_list/', goods_list),
     path('goodsadd/', goods_add),
+    path('order/', order),
+    path('change_order/', change_order),
     re_path('goods_list/(?P<type>\d{0,1})/(?P<page>\d+)/', goods_list),
     re_path('goods_status/(?P<type>\w+)/(?P<id>\d+)/', goods_status),
     re_path('middleteest/(?P<date>\w+)/', middletest),

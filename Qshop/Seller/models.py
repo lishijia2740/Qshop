@@ -16,7 +16,7 @@ class MyUser(Manager):
         return email
 
     def getGoods(self, user_id):
-        from Buyer.models import PayOrder,OrderInfo
+        from Buyer.models import PayOrder, OrderInfo
         goods_name_list = []
         payorder = PayOrder.objects.filter(order_user=LoginUser.objects.get(id="user_id"), order_status=2).all()
         for one in payorder:
@@ -48,6 +48,17 @@ class LoginUser(models.Model):
         db_table = 'loginuser'
 
 
+class UserAddress(models.Model):
+    user = models.ForeignKey(to=LoginUser,on_delete=models.CASCADE)
+    address = models.TextField(verbose_name="地址")
+    phone = models.CharField(max_length=11, verbose_name="收货人手机号")
+    name = models.CharField(max_length=32, verbose_name="收货人名字")
+    status = models.IntegerField(verbose_name="状态")  ##  0 未选中   1 使用中
+
+    class Meta:
+        db_table="useraddress"
+
+
 class GoodsType(models.Model):
     type_lebal = models.CharField(max_length=32)
     type_desciption = models.TextField()
@@ -74,5 +85,6 @@ class Goods(models.Model):
 
     class Meta:
         db_table = "goods"
+
 
 

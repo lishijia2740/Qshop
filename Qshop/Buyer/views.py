@@ -5,7 +5,9 @@ from Seller.models import *
 from Buyer.models import *
 # Create your views here.
 import hashlib
-
+from django.views.decorators.cache import cache_page
+import logging
+collect = logging.getLogger("django")
 
 
 # 密码加密
@@ -36,6 +38,7 @@ def LoginValid(func):
 
 
 # 主页
+@cache_page(120)
 def index(request):
     print(request.COOKIES.get('username'))
     goods_type = GoodsType.objects.all()
@@ -91,6 +94,7 @@ def login(request):
                 response.set_cookie("username", user.username)
                 response.set_cookie("user_id", user.id)
                 request.session["username"] = username
+                collect.debug("%s is login" % user.username)
                 return response
             else:
                 result = '账户或者密码不正确'
@@ -108,6 +112,7 @@ def login(request):
 def logout(request):
     response = HttpResponseRedirect('/buyer/login/')
     response.delete_cookie('username')
+    response.delete_cookie('user_id')
     del request.session
     return response
 
@@ -119,16 +124,19 @@ def goodslist(request):
     if req_type == "findall":
         goods_type = GoodsType.objects.get(id=int(keywords))
         goods_all = goods_type.goods_set.all()
+        print(goods_all)
     else:
         goods_all = Goods.objects.filter(goods_name__icontains=keywords).all()
-        goods_new = goods_all.order_by("-goods_pro_time")[:2]
+        print(goods_all)
+    goods_new = goods_all.order_by("-goods_pro_time")[:2]
     return render(request, 'buyer/goods_list.html', locals())
 
 
 #商品详情
 def details(request, goods_id):
     goods = Goods.objects.get(id=int(goods_id))
-    print(goods.id)
+    address = UserAddress.objects.filter(status=1).first()
+    print(address)
     return render(request, 'buyer/detail.html', locals())
 
 @LoginValid
@@ -157,6 +165,8 @@ def place_order(request):
     user_id = request.COOKIES.get("user_id")
     goods_id = request.GET.get("goods_id")
     goods_count = request.GET.get("goods_count")
+    address_id = request.GET.get("address_id")
+    print(address_id)
     goods = Goods.objects.get(id=int(goods_id))
     ## 保存数据
     ## 保存订单
@@ -165,6 +175,7 @@ def place_order(request):
     payorder.order_status = 1  ## 未支付
     payorder.order_total = goods.goods_price * int(goods_count)
     payorder.order_user = LoginUser.objects.get(id=int(user_id))
+    payorder.order_address_id = address_id
     payorder.save()
     ## 保存订单详情
 
@@ -174,8 +185,11 @@ def place_order(request):
     orderinfo.goods_price = goods.goods_price
     orderinfo.goods_count = int(goods_count)
     orderinfo.goods_total_price = goods.goods_price * int(goods_count)
+    orderinfo.store_id = goods.goods_store_id
     orderinfo.save()
 
+    address = UserAddress.objects.get(id=address_id)
+    print(address)
     return render(request, "buyer/place_order.html", locals())
 
 
@@ -189,7 +203,40 @@ def user_center_order(request):
 
 @LoginValid
 def user_center_site(request):
+    user_id = request.COOKIES.get("user_id")
+    user = LoginUser.objects.get(id=user_id)
+    if request.method == "POST":
+        data = request.POST
+        useraddress = UserAddress()
+        useraddress.user = user
+        useraddress.address = data.get("address")
+        useraddress.phone = data.get("phone")
+        useraddress.name = data.get("name")
+        useraddress.status = 0
+        useraddress.save()
+
+    user_address_all = UserAddress.objects.filter(user=user).all()
+
     return render(request, 'buyer/user_center_site.html', locals())
+
+
+def updateAddress(request):
+    if request.method == "POST":
+        print(request.POST)
+        address_id = request.POST.get("address")
+        print(address_id)
+        ## 完成修改地址状态
+        ## 2. 修改之前选中的地址状态
+        user_address = UserAddress.objects.filter(status=1).first()
+        user_address.status = 0
+        user_address.save()
+
+        ## 1. 修改选中的地址的状态
+        user_address = UserAddress.objects.filter(id=address_id).first()
+        user_address.status = 1
+        user_address.save()
+
+        return HttpResponseRedirect("/buyer/user_center_site/")
 
 
 from Qshop.settings import alipay
@@ -216,6 +263,7 @@ def payresult(request):
     payorder.order_status = 2
     payorder.save()
 
+    payorder.orderinfo_set.all().update(order_status=2)
     return render(request, 'buyer/payresult.html', locals())
 
 
@@ -277,7 +325,10 @@ def place_order_more(request):
             orderinfo.goods_price = goods.goods_price
             orderinfo.goods_count = cart.goods_number
             orderinfo.goods_total_price = cart.goods_total
+            orderinfo.store_id = goods.goods_store_id
             orderinfo.save()
+
+
             order_total += cart.goods_total
             order_count += cart.goods_number
 
@@ -321,3 +372,56 @@ def change_cart(request):
 
     return JsonResponse(result)
 
+
+from django.core.cache import cache
+
+
+def get_goods(request):
+    goods_id = request.GET.get("id")
+    data = cache.get(goods_id)
+    if data:
+        print("第一次")
+        return HttpResponse(data)
+    else:
+        print("第二次")
+        goods = Goods.objects.get(id=goods_id)
+        cache.set(goods_id, goods.goods_name, 600)
+        return HttpResponse(goods.goods_name)
+
+
+def update_goods(request):
+    goods_id = request.GET.get("id")
+    goods_name = request.GET.get("goods_name")
+    goods = Goods.objects.get(id=goods_id)
+    data = cache.get(goods_id)
+    if data:
+        print("第三次")
+        cache.delete(goods_id)
+    goods.goods_name = goods_name
+    goods.save()
+    return HttpResponse("保存数据完成")
+
+
+def myadd(request):
+    return render(request, 'buyer/myadddemo.html', locals())
+
+
+from sdk.sendDD import senddingding
+import random
+def get_code(request):
+    result = {"code":10000,"msg":""}
+    ### 发送请求 获取验证码
+    """(content = "",isAtAll= True/False,"atMobiles": [])"""
+    ### 随机四位数字
+    code = random.randint(1000,9999)
+    params = {"content": "您的验证码为%s,打死不要告诉别人!!!" % code, "atMobiles": [], "isAtAll": True}
+    try:
+        senddingding(params)
+        ### 保存验证码
+        validcode.objects.create(code=code, user=request.GET.get("e mail"))
+        result = {"code": 10000, "msg": "发送验证码成功"}
+
+    except:
+        result = {"code": 10001, "msg": "发送验证码失败"}
+    print(result)
+    return JsonResponse(result)

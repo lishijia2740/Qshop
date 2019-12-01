@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Seller',
     'Buyer',
-    'djcelery'
+    'djcelery',
+    'Buyer.templatetags',
 ]
 
 
@@ -52,7 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'Qshop.middlewaretest.MiddleWareTest',
+    # 'Qshop.middlewaretest.MiddleWareTest',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'Qshop.urls'
@@ -88,8 +90,26 @@ DATABASES = {
         'PASSWORD': 'root',
         'HOST': '127.0.0.1',
         'PORT': '3306',
-    }
+    },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'demo',
+    #     'USER': 'root',
+    #     'PASSWORD': 'root',
+    #     'HOST': '10.10.92.196',
+    #     'PORT': '3306',
+    # },
+    # 'slave': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'demo',
+    #     'USER': 'root',
+    #     'PASSWORD': 'root',
+    #     'HOST': '10.10.92.199',
+    #     'PORT': '3306',
+    # }
 }
+
+# DATABASE_ROUTERS = ["Qshop.mydbrouter.Router"]
 
 
 # Password validation
@@ -172,11 +192,34 @@ CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler" ### celery的处�
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': [
+            "127.0.0.1:11211"
+        ]
     }
 }
 
 CACHE_MIDDLEWARE_KEY_PREFIX = ''
 CACHE_MIDDLEWARE_SECONDS = 600
 CACHE_MIDDLEWARE_ALIAS = 'default'
+
+import os
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'django.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 

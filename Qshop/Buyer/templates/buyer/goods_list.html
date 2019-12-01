@@ -2,8 +2,9 @@
 {% block title %}
     商品列表页
 {% endblock %}
-
+{% load cache %}
 {% block content %}
+    {% cache 500 asdfafsadf %}
     <div class="navbar_con">
         <div class="navbar clearfix">
             <div class="subnav_con fl">
@@ -59,10 +60,10 @@
             </div>
 
             <ul class="goods_type_list clearfix">
-                {% for one in goods_all %}
+                {% for one in goods_all%}
                 <li>
                     <a href="/buyer/detail/{{ one.id }}"><img src="/static/{{ one.goods_picture }}"></a>
-                    <h4><a href="detail.html">{{ one.goods_name }}</a></h4>
+                    <h4><a href="/buyer/detail/{{ one.id }}">{{ one.goods_name }}</a></h4>
                     <div class="operate">
                         <span class="prize">￥{{ one.goods_price }}</span>
                         <span class="unit">{{ one.goods_price }}/500g</span>
@@ -85,7 +86,7 @@
             </div>
         </div>
     </div>
-
+    {% endcache %}
 {% endblock %}
 
 {% block script %}

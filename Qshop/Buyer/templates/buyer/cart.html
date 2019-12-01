@@ -14,6 +14,7 @@
 	</ul>
     <form action="/buyer/place_order_more/" method="post" >
     {% csrf_token %}
+
     {% for one in cart %}
 	<ul class="cart_list_td clearfix">
 		<li class="col01"><input type="checkbox" name="cartid_{{ one.id }}" class="goods_box" value="{{ one.id }}"></li>
@@ -91,6 +92,7 @@
         $("#number").text(dict.num);
         $("#total_mount").text(dict.total_mount);
     }
+
 
 
     </script>

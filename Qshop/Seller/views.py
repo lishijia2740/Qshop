@@ -36,9 +36,46 @@ def LoginValid(func):
 
 
 # 主页
+from CeleryTask.tasks import Test, sendDingDing
+from django.db.models import Sum
+import datetime
 @LoginValid
 def index(request):
-    # Test.delay()
+    user_id = request.COOKIES.get("user_id")
+    user = LoginUser.objects.get(id=user_id)
+    # month = datetime.datetime.now().month
+    month = 11
+    print(user_id)
+    print(user)
+    print(month)
+
+    #  1. 当月成交订单量
+    #  当月成交了多少订单   订单详情多少条
+    #  条件： 状态 -》  2 3 4 5
+    count_order = OrderInfo.objects.filter(store=user, order_status__in=[2, 3, 4, 5], order_id__order_date__month=month).count()
+    print(count_order)
+
+    ## 2. 当月的成交额
+    ##当月的销售金额总和
+    total_mount_money = 0
+
+    total_mount_money = OrderInfo.objects.filter(store=user, order_status__in=[2, 3, 4, 5], order_id__order_date__month=month).aggregate(Sum("goods_total_price")).get("goods_total_price__sum")
+    print(total_mount_money)
+
+    # 3. 销量最高的商品
+    # 按照销售数量
+    # 最多的商品
+    ## 按照商品进行 分组   ->  sum(商品的数量)  goods_id
+    ## 查询 数量最多的商品
+    data = OrderInfo.objects.values("goods").annotate(Sum("goods_count")).order_by("-goods_count__sum").first().get("goods")
+    goods_name = Goods.objects.get(id=data).goods_name
+
+    # 4. 当月成交商品的总量
+    # 成交单品数量的总和
+
+    total_goods = OrderInfo.objects.filter(store=user, order_status__in=[2, 3, 4, 5], order_id__order_date__month=month).aggregate(Sum("goods_count")).get("goods_count__sum")
+    print(total_goods)
+
     return render(request, 'seller/index.html', locals())
 
 
@@ -235,4 +272,41 @@ def middletest(request, data):
     rep = HttpResponse("middletest")
     rep.render = test
     return rep
+
+
+def order(request):
+    user_id = request.COOKIES.get("user_id")
+    status = request.GET.get("status")
+    order_info = OrderInfo.objects.filter(store=LoginUser.objects.get(id=user_id), order_status=status)
+    print(order_info)
+    return render(request, 'seller/order.html', locals())
+
+def change_order(request):
+    ## 修改状态
+    ## 获取到 order_info 的id
+    ## 操作的内容 确认发货 取消订单 修改
+    order_id = request.GET.get("order_id")
+    type = request.GET.get("type")
+    order_info = OrderInfo.objects.get(id=order_id)
+    if type == "tx":
+        ## 提醒用户支付
+        ## 发送邮件或者 发送短息
+        ## 发钉钉
+        params = {
+            "content": "您的订单，请立即付款",
+            "atMobiles": [],
+            "isAtAll": True
+        }
+        sendDingDing.delay(params)
+    elif type == "qx":
+        pass
+    elif type == "xg":
+        pass
+    elif type == "fh":
+        order_info.order_status = 4
+        order_info.save()
+    url = request.META.get("HTTP_REFERER")  ## 获取请求的来源
+    return HttpResponseRedirect(url)
+
+
 
